@@ -3,3 +3,4 @@ venv
 stockfish
 example_pgn.txt
 __pychache__
+src/__pycache__

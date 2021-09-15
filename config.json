@@ -1,3 +1,6 @@
 {
-  "stockfish_binary_path": "../stockfish/bin/stockfish"
+  "stockfish_binary_path": "../stockfish/bin/stockfish",
+  "analysis": {
+    "time": 1
+  }
 }

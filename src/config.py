@@ -1,9 +1,10 @@
 from json_configparser import ConfigArgs
-from typing import NamedTuple
+from typing import NamedTuple, Dict
 
 
 class Arguments(NamedTuple):
-    stockfish_binary_path: str = ""
+    stockfish_binary_path: str
+    analysis: Dict[str, float]
 
 
 def create_args_object(config_path):
