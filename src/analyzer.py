@@ -6,11 +6,20 @@ import config
 import progress_bar
 
 
-def _read_pgn_from_string(text: str):
-    if pgn := chess.pgn.read_game(io.StringIO(text)) is not None:
+def read_pgn_from_string(text: str):
+    pgn = chess.pgn.read_game(io.StringIO(text))
+    if _is_valid_pgn(pgn):
         return pgn
     else:
-        raise RuntimeError
+        return None
+
+
+def _is_valid_pgn(pgn):
+    header_error_count = 0
+    for key in pgn.headers.keys():
+        if pgn.headers.get(key) == '?' or pgn.headers.get(key) == '*':
+            header_error_count += 1
+    return header_error_count < 3
 
 
 def _read_pgn_from_file(filepath: str):
@@ -33,6 +42,9 @@ def _generate_move_string(move_algebraic, move_counter):
 
 
 def analyze_game(game):
+    conf = config.create_args_object('../config.json')
+    engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
+
     blunders = []
 
     moves = game.mainline_moves()
@@ -62,12 +74,13 @@ def analyze_game(game):
         prev_score = score_absolute
 
         turn_string = _generate_turn_string(move_counter, move_algebraic, True)
-        progress_bar.print_progress_bar(iteration=move_counter, total=total_moves, suffix=turn_string)
+        # progress_bar.print_progress_bar(iteration=move_counter, total=total_moves, suffix=turn_string)
 
         move_counter += 0.5
         prev_analysis = analysis
 
-    _print_blunders(blunders)
+    engine.close()
+    return blunders
 
 
 def _generate_turn_string(move_counter: float, move_algebraic: str, use_context: bool) -> str:
@@ -110,7 +123,7 @@ def _evaluate_move(board, blunders, move_algebraic, move_counter, prev_score, sc
                 "move": move_algebraic,
                 "prev_score": prev_score,
                 "new_score": score,
-                "best continuation": _generate_alternative_line_algebraic(board, prev_analysis.get('pv')[:6], move_counter)
+                "continuation": _generate_alternative_line_algebraic(board, prev_analysis.get('pv')[:6], move_counter)
             })
 
 
@@ -143,7 +156,6 @@ def _print_blunders(blunders):
         print(blunder)
 
 
-if __name__ == '__main__':
-    conf = config.create_args_object('../config.json')
-    engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
-    analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
+# if __name__ == '__main__':
+#
+#     analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
