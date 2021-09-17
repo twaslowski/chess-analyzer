@@ -1,13 +1,15 @@
 import chess.pgn
 import chess.engine
 import math
-from src import config
 
-pgn_filename = '../example_pgn.txt'
+from chess import Move, Board
+
+from src import config
+from src import progress_bar
+
+pgn_filename = '../example_pgn_2.txt'
 
 blunders = []
-mistakes = []
-inaccuracies = []
 missed_wins = []
 
 
@@ -25,11 +27,12 @@ def generate_move_string(move_algebraic, move_counter):
         return f"{int(move_counter - 0.5)}. .. {move_algebraic}"
 
 
-def analyze_game(max_depth):
+def analyze_game():
     scores = []
     prev_score = 0
     move_counter = 1
     turn_string = ''
+    prev_analysis = {}
 
     for move in moves:
         # formal stuff
@@ -37,7 +40,7 @@ def analyze_game(max_depth):
         board.push(move)
 
         # do analysis for current board state
-        analysis = engine.analyse(board, chess.engine.Limit(depth=depth))
+        analysis = engine.analyse(board, chess.engine.Limit(time=0.1))
 
         # do the score graph
         score_relative = analysis.get('score')
@@ -45,20 +48,46 @@ def analyze_game(max_depth):
         scores.append(score_absolute)
 
         # blunders, mistakes, inaccuracies logic
-        evaluate_move(move_algebraic, move_counter, prev_score, score_absolute)
+        evaluate_move(move_algebraic, move_counter, prev_score, score_absolute, prev_analysis)
         prev_score = score_absolute
 
-        if move_counter % 1 != 0:
-            turn_string += f'{move_algebraic} ({score_absolute})'
-            print(turn_string)
-            turn_string = ''
-        else:
-            turn_string = f'{int(move_counter)}. {move_algebraic} ({score_absolute}) '
+        turn_string = generate_turn_string(move_counter, move_algebraic, True)
+        progress_bar.print_progress_bar(iteration=move_counter, total=total_moves, suffix=turn_string)
 
         move_counter += 0.5
+        prev_analysis = analysis
 
 
-def evaluate_move(move_algebraic, move_counter, prev_score, score):
+def generate_turn_string(move_counter: float, move_algebraic: str, use_context: bool) -> str:
+    if move_counter % 1 != 0:
+        prefix = f"{math.floor(move_counter)}. .." if use_context else ' '
+        return f"{prefix}{move_algebraic} "
+    else:
+        return f'{int(move_counter)}. {move_algebraic}'
+
+
+def generate_alternative_line_algebraic(alternative_moves, move_counter):
+    # store the move that was actually played
+    prev_move = board.pop()
+
+    # create string for alternative line
+    alternative_line_algebraic_string = ''
+    for move in alternative_moves:
+        move_algebraic = board.san(move)
+        turn_string = generate_turn_string(move_counter, move_algebraic, False)
+        alternative_line_algebraic_string += f"{turn_string}"
+        board.push(move)
+        move_counter += 0.5
+
+    # clean up
+    for i in range(len(alternative_moves)):
+        board.pop()
+    board.push(prev_move)
+
+    return alternative_line_algebraic_string
+
+
+def evaluate_move(move_algebraic, move_counter, prev_score, score, prev_analysis):
     if move_counter % 1 != 0:
         move_algebraic = ".." + move_algebraic
         move_counter -= 0.5
@@ -66,11 +95,13 @@ def evaluate_move(move_algebraic, move_counter, prev_score, score):
         if is_missed_win(prev_score, score):
             missed_wins.append(f"{int(move_counter)}. {move_algebraic}")
         elif is_blunder(prev_score, score):
-            blunders.append(f"{int(move_counter)}. {move_algebraic}")
-        elif is_mistake(prev_score, score):
-            mistakes.append(f"{int(move_counter)}. {move_algebraic}")
-        elif is_inaccuracy(prev_score, score):
-            inaccuracies.append(f"{int(move_counter)}. {move_algebraic}")
+            blunders.append({
+                "turn": int(move_counter),
+                "move": move_algebraic,
+                "prev_score": prev_score,
+                "new_score": score,
+                "best continuation": generate_alternative_line_algebraic(prev_analysis.get('pv')[:6], move_counter)
+            })
 
 
 def is_missed_win(prev_score, score):
@@ -101,12 +132,9 @@ def have_same_sign(i: int, j: int):
     return i < 0 and j < 0 or i > 0 and j > 0
 
 
-def is_mistake(prev_score, score):
-    return False
-
-
-def is_inaccuracy(prev_score, score):
-    return False
+def print_blunders():
+    for blunder in blunders:
+        print(blunder)
 
 
 if __name__ == '__main__':
@@ -121,10 +149,10 @@ if __name__ == '__main__':
 
     moves = game.mainline_moves()
     board = game.board()
+    total_moves = math.ceil(len(list(moves)) / 2)
 
-    analyze_game(depth)
-    print(f"blunders: {blunders}")
-    print(f"mistakes: {mistakes}")
-    print(f"inaccuracies: {inaccuracies}")
+    analyze_game()
+    print()
+    print_blunders()
 
     engine.close()
