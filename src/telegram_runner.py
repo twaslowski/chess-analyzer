@@ -26,7 +26,7 @@ def help_handler(update, context):
 def stringify_blunders(blunders: List[Blunder]):
     result_string = "Here's the most interesting moves I could find: \n"
     for blunder in blunders:
-        result_string += blunder.stringify()
+        result_string += blunder.stringify() + '\n'
     return result_string
 
 
@@ -35,8 +35,13 @@ def message_handler(update, context):
     pgn = analyzer.read_pgn_from_string(user_input)
     if pgn is not None:
         context.bot.send_message(chat_id=update.effective_chat.id, text="I'm analyzing your game now! This may take a second.")
-        blunders = analyzer.analyze_game(pgn)
+        blunders, plot = analyzer.analyze_game(pgn)
         context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_blunders(blunders))
+        with open('test.png', 'rb') as f:
+            plot = f.read()
+        f.close()
+        os.remove('test.png')
+        context.bot.send_document(chat_id=update.effective_chat.id, document=plot)
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text="That doesn't look like a PGN to me.")
 

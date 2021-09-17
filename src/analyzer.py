@@ -1,6 +1,6 @@
 import chess.pgn
 import chess.engine
-import typing
+from typing import *
 import math
 import io
 import config
@@ -38,7 +38,7 @@ def _calculate_absolute_score(relative_score):
         return int(str(relative_score.white())) / 100
 
 
-def analyze_game(game: chess.pgn) -> typing.List[Blunder]:
+def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
     conf = config.create_args_object('../config.json')
     engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
 
@@ -76,9 +76,9 @@ def analyze_game(game: chess.pgn) -> typing.List[Blunder]:
         move_counter += 0.5
         prev_analysis = analysis
 
-    print(scores)
     engine.close()
-    return blunders
+    plot = plotter.plot(scores)
+    return blunders, plot
 
 
 def _evaluate_move(board, move, blunders, move_counter, prev_score, score, prev_analysis):
@@ -116,6 +116,3 @@ def example():
     blunders_list = list(map(Blunder.stringify, blunders))
     for blunder in blunders_list:
         print(blunder)
-
-
-example()
