@@ -80,13 +80,6 @@ def analyze_game(game: chess.pgn) -> typing.List[Blunder]:
     return blunders
 
 
-def _generate_move_string(move_algebraic, move_counter):
-    if move_counter % 1 == 0:
-        return f"{int(move_counter)}. {move_algebraic}"
-    else:
-        return f"{int(move_counter - 0.5)}. .. {move_algebraic}"
-
-
 def _evaluate_move(board, move, blunders, move_counter, prev_score, score, prev_analysis):
     if move_counter > 1:
         if _is_blunder(prev_score, score):
@@ -117,13 +110,10 @@ def _have_same_sign(i: int, j: int):
     return i < 0 and j < 0 or i > 0 and j > 0
 
 
-def _print_blunders(blunders):
-    for blunder in blunders:
+def example():
+    blunders = analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
+    blunders_list = list(map(Blunder.stringify, blunders))
+    print(blunders)
+    for blunder in blunders_list:
         print(blunder)
-
-
-blunders = analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
-blunders_list = list(map(Blunder.stringify, blunders))
-for blunder in blunders_list:
-    print(blunder)
 

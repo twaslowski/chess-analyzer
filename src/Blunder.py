@@ -18,9 +18,9 @@ class Blunder:
         move_algebraic = self.board.san(self.move)
 
         result_string = ''
-        result_string += f"{board_util.generate_turn_string(self.turn, move_algebraic, True)} "
+        result_string += f"{board_util.generate_turn_string(self.turn, move_algebraic, True)}"
         result_string += f"({str(self.scores[0])} to {str(self.scores[1])})\n"
-        result_string += f"Continuation: {self._generate_alternative_line_algebraic(prev_move)}"
+        result_string += f"Alternative and Continuation: {self._generate_alternative_line_algebraic(prev_move)}"
         return result_string
 
     def _generate_alternative_line_algebraic(self, prev_move) -> str:
@@ -30,7 +30,7 @@ class Blunder:
         for move in self.continuation:
             move_algebraic = self.board.san(move)
             turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, True)
-            alternative_line_algebraic_string += f"{turn_string}"
+            alternative_line_algebraic_string += f"{turn_string} "
             self.board.push(move)
             turn_counter += 0.5
 
