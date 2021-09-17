@@ -5,8 +5,9 @@ import math
 import io
 import config
 import progress_bar
-from src.Blunder import Blunder
-from src.board_util import generate_turn_string
+from Blunder import Blunder
+from board_util import generate_turn_string
+import plotter
 
 
 def read_pgn_from_string(text: str):
@@ -75,7 +76,7 @@ def analyze_game(game: chess.pgn) -> typing.List[Blunder]:
         move_counter += 0.5
         prev_analysis = analysis
 
-    print()
+    print(scores)
     engine.close()
     return blunders
 
@@ -113,7 +114,8 @@ def _have_same_sign(i: int, j: int):
 def example():
     blunders = analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
     blunders_list = list(map(Blunder.stringify, blunders))
-    print(blunders)
     for blunder in blunders_list:
         print(blunder)
 
+
+example()
