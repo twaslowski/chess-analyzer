@@ -1,9 +1,12 @@
 import chess.pgn
 import chess.engine
+import typing
 import math
 import io
 import config
 import progress_bar
+from src.Blunder import Blunder
+from src.board_util import generate_turn_string
 
 
 def read_pgn_from_string(text: str):
@@ -34,14 +37,7 @@ def _calculate_absolute_score(relative_score):
         return int(str(relative_score.white())) / 100
 
 
-def _generate_move_string(move_algebraic, move_counter):
-    if move_counter % 1 == 0:
-        return f"{int(move_counter)}. {move_algebraic}"
-    else:
-        return f"{int(move_counter - 0.5)}. .. {move_algebraic}"
-
-
-def analyze_game(game):
+def analyze_game(game: chess.pgn) -> typing.List[Blunder]:
     conf = config.create_args_object('../config.json')
     engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
 
@@ -70,61 +66,31 @@ def analyze_game(game):
         scores.append(score_absolute)
 
         # blunders, mistakes, inaccuracies logic
-        _evaluate_move(board, blunders, move_algebraic, move_counter, prev_score, score_absolute, prev_analysis)
+        _evaluate_move(board, move, blunders, move_counter, prev_score, score_absolute, prev_analysis)
         prev_score = score_absolute
 
-        turn_string = _generate_turn_string(move_counter, move_algebraic, True)
-        # progress_bar.print_progress_bar(iteration=move_counter, total=total_moves, suffix=turn_string)
+        turn_string = generate_turn_string(move_counter, move_algebraic, True)
+        progress_bar.print_progress_bar(iteration=move_counter, total=total_moves, suffix=turn_string)
 
         move_counter += 0.5
         prev_analysis = analysis
 
+    print()
     engine.close()
     return blunders
 
 
-def _generate_turn_string(move_counter: float, move_algebraic: str, use_context: bool) -> str:
-    if move_counter % 1 != 0:
-        prefix = f"{math.floor(move_counter)}. .." if use_context else ' '
-        return f"{prefix}{move_algebraic} "
+def _generate_move_string(move_algebraic, move_counter):
+    if move_counter % 1 == 0:
+        return f"{int(move_counter)}. {move_algebraic}"
     else:
-        return f'{int(move_counter)}. {move_algebraic}'
+        return f"{int(move_counter - 0.5)}. .. {move_algebraic}"
 
 
-def _generate_alternative_line_algebraic(board, alternative_moves, move_counter):
-    # store the move that was actually played
-    prev_move = board.pop()
-
-    # create string for alternative line
-    alternative_line_algebraic_string = ''
-    for move in alternative_moves:
-        move_algebraic = board.san(move)
-        turn_string = _generate_turn_string(move_counter, move_algebraic, False)
-        alternative_line_algebraic_string += f"{turn_string}"
-        board.push(move)
-        move_counter += 0.5
-
-    # clean up
-    for i in range(len(alternative_moves)):
-        board.pop()
-    board.push(prev_move)
-
-    return alternative_line_algebraic_string
-
-
-def _evaluate_move(board, blunders, move_algebraic, move_counter, prev_score, score, prev_analysis):
-    if move_counter % 1 != 0:
-        move_algebraic = ".." + move_algebraic
-        move_counter -= 0.5
+def _evaluate_move(board, move, blunders, move_counter, prev_score, score, prev_analysis):
     if move_counter > 1:
         if _is_blunder(prev_score, score):
-            blunders.append({
-                "turn": int(move_counter),
-                "move": move_algebraic,
-                "prev_score": prev_score,
-                "new_score": score,
-                "continuation": _generate_alternative_line_algebraic(board, prev_analysis.get('pv')[:6], move_counter)
-            })
+            blunders.append(Blunder(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6]))
 
 
 # strictly numerical approach to blunders
@@ -156,6 +122,8 @@ def _print_blunders(blunders):
         print(blunder)
 
 
-# if __name__ == '__main__':
-#
-#     analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
+blunders = analyze_game(_read_pgn_from_file('../example_pgn_2.txt'))
+blunders_list = list(map(Blunder.stringify, blunders))
+for blunder in blunders_list:
+    print(blunder)
+

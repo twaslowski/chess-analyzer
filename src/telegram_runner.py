@@ -3,6 +3,8 @@ import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
 import analyzer
+from src.Blunder import Blunder
+from typing import List
 
 # Setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -21,13 +23,10 @@ def help_handler(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='blub')
 
 
-def stringify_blunders(blunders):
+def stringify_blunders(blunders: List[Blunder]):
     result_string = "Here's the most interesting moves I could find: \n"
     for blunder in blunders:
-        result_string += f"{str(blunder.get('turn'))}. {blunder.get('move')} "
-        result_string += f"(before: {str(blunder.get('prev_score'))}, after: {blunder.get('new_score')})\n"
-        result_string += 'Continuation: ' + blunder.get('continuation')
-        result_string += '\n'
+        result_string += blunder.stringify()
     return result_string
 
 
