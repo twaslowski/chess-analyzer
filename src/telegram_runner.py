@@ -6,7 +6,7 @@ import analyzer
 
 # Setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-updater = Updater(token='1934355466:AAH1OLMU1hnE5f9OX9OvG5wBU9_IDOtS4Rc', use_context=True)
+updater = Updater(token=os.getenv('telegram_token_chess'), use_context=True)
 dispatcher = updater.dispatcher
 
 
