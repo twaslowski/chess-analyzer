@@ -3,7 +3,7 @@ import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
 import analyzer
-from src.Blunder import Blunder
+from Blunder import Blunder
 from typing import List
 
 # Setup

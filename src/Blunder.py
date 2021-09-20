@@ -1,7 +1,7 @@
 import chess
 from typing import Tuple, List
 from dataclasses import dataclass
-from src import board_util
+import board_util
 
 
 @dataclass()

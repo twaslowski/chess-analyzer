@@ -39,7 +39,7 @@ def _calculate_absolute_score(relative_score):
 
 
 def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
-    conf = config.create_args_object('../config.json')
+    conf = config.create_args_object('config.json')
     engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
 
     blunders = []
