@@ -5,7 +5,6 @@ import math
 from Blunder import Blunder
 import config
 import threading
-import logging
 
 
 class Analysis:
@@ -14,7 +13,7 @@ class Analysis:
         self.progress: int = 0
         self.is_done = False
         self.conf = config.create_args_object('config.json')
-        self.depth = int(self.conf.analysis.get('depth'))
+        self.depth = int(self.conf.depth)
         self.blunders = []
 
     def run(self):

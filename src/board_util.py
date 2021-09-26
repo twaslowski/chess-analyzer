@@ -6,4 +6,4 @@ def generate_turn_string(move_counter: float, move_algebraic: str, use_context: 
         prefix = f"{math.floor(move_counter)}. .." if use_context else ' '
         return f"{prefix}{move_algebraic} "
     else:
-        return f'{int(move_counter)}. {move_algebraic}'
+        return f'{int(move_counter)}. {move_algebraic} '

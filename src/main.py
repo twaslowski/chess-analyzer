@@ -28,7 +28,7 @@ def help_handler(update, context):
 
 
 def stringify_blunders(blunders: List[Blunder]):
-    result_string = "Here's the most interesting moves I could find: \n"
+    result_string = "Here's the most interesting moves I could find: \n\n"
     for blunder in blunders:
         result_string += blunder.stringify() + '\n'
     return result_string
