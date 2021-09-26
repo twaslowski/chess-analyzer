@@ -4,7 +4,7 @@ from telegram.ext import Updater
 import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
-import analyzer
+import pgn_helper
 from Blunder import Blunder
 from typing import List
 from Analysis import Analysis
@@ -36,7 +36,7 @@ def stringify_blunders(blunders: List[Blunder]):
 
 def message_handler(update, context):
     user_input = update.message.text
-    pgn = analyzer.read_pgn_from_string(user_input)
+    pgn = pgn_helper.read_pgn_from_string(user_input)
     if pgn is not None:
         msg = context.bot.send_message(chat_id=update.effective_chat.id, text="Analyzing your game now! Progress: 0%")
         analysis = Analysis(pgn)
