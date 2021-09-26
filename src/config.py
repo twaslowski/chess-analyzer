@@ -4,7 +4,7 @@ from typing import NamedTuple, Dict
 
 class Arguments(NamedTuple):
     stockfish_binary_path: str
-    time: int
+    time: float
     log_level: str
 
 

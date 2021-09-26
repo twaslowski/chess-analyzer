@@ -60,7 +60,7 @@ class Analysis:
         if move_counter > 1:
             if _is_blunder(prev_score, score):
                 self.blunders.append(
-                    Blunder(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6]))
+                    Blunder(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6], prev_analysis.get('depth')))
 
 
 def _calculate_absolute_score(relative_score):

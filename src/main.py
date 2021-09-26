@@ -42,17 +42,17 @@ def message_handler(update, context):
         analysis.run()
         current_progress = analysis.progress
         msg = context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=f"Analyzing your game now! Progress: {current_progress}% (depth: {analysis.depth})")
+                                       text=f"Analyzing your game now! Progress: {current_progress}%")
         while analysis.is_done is not True:
             if current_progress != analysis.progress:
                 current_progress = analysis.progress
                 context.bot.edit_message_text(chat_id=update.effective_chat.id,
                                               message_id=msg.message_id,
-                                              text=f'Analyzing your game now! Progress: {current_progress}% (depth: {analysis.depth})')
+                                              text=f'Analyzing your game now! Progress: {current_progress}%')
             time.sleep(1)
         context.bot.edit_message_text(chat_id=update.effective_chat.id,
                                       message_id=msg.message_id,
-                                      text=f'Analyzing your game now! Progress: 100% (depth: {analysis.depth})')
+                                      text=f'Analyzing your game now! Progress: 100%)')
         blunders = analysis.blunders
         context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_blunders(blunders))
     else:
@@ -66,7 +66,7 @@ def error_handler(update, context):
 
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('help', help_handler))
-dispatcher.add_error_handler(error_handler)
+# dispatcher.add_error_handler(error_handler)
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message_handler))
 
 updater.start_polling()
