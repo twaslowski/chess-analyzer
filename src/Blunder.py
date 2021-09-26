@@ -20,7 +20,7 @@ class Blunder:
         result_string = ''
         result_string += f"{board_util.generate_turn_string(self.turn, move_algebraic, True)}"
         result_string += f"({str(self.scores[0])} to {str(self.scores[1])})\n"
-        result_string += f"Alternative and Continuation: {self._generate_alternative_line_algebraic(prev_move)}"
+        result_string += f"Alternative and Continuation: {self._generate_alternative_line_algebraic(prev_move)}\n"
         return result_string
 
     def _generate_alternative_line_algebraic(self, prev_move) -> str:

@@ -1,7 +1,7 @@
 {
   "stockfish_binary_path": "stockfish/stockfish_bin",
   "analysis": {
-    "time": 0.2,
+    "time": 0,
     "depth": 18
   }
 }

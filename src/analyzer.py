@@ -59,7 +59,7 @@ def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
         board.push(move)
 
         # do analysis for current board state
-        analysis = engine.analyse(board, chess.engine.Limit(time=0.2))
+        analysis = engine.analyse(board, chess.engine.Limit(conf.analysis.depth))
 
         # do the score graph
         score_relative = analysis.get('score')
