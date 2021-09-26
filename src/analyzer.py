@@ -7,7 +7,6 @@ import config
 import progress_bar
 from Blunder import Blunder
 from board_util import generate_turn_string
-import plotter
 
 
 def read_pgn_from_string(text: str):
@@ -38,7 +37,7 @@ def _calculate_absolute_score(relative_score):
         return int(str(relative_score.white())) / 100
 
 
-def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
+def analyze_game(game: chess.pgn) -> List[Blunder]:
     conf = config.create_args_object('config.json')
     engine = chess.engine.SimpleEngine.popen_uci(conf.stockfish_binary_path)
 
@@ -59,7 +58,7 @@ def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
         board.push(move)
 
         # do analysis for current board state
-        analysis = engine.analyse(board, chess.engine.Limit(conf.analysis.depth))
+        analysis = engine.analyse(board, chess.engine.Limit(depth=conf.analysis.get("depth")))
 
         # do the score graph
         score_relative = analysis.get('score')
@@ -77,8 +76,7 @@ def analyze_game(game: chess.pgn) -> Tuple[List[Blunder], Any]:
         prev_analysis = analysis
 
     engine.close()
-    plot = plotter.plot(scores)
-    return blunders, plot
+    return blunders
 
 
 def _evaluate_move(board, move, blunders, move_counter, prev_score, score, prev_analysis):
