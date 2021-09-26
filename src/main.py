@@ -9,7 +9,7 @@ from Blunder import Blunder
 from typing import List
 
 # Setup
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.WARN)
 updater = Updater(token=os.getenv('telegram_token_chess'), use_context=True)
 dispatcher = updater.dispatcher
 
