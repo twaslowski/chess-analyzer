@@ -38,17 +38,21 @@ def message_handler(update, context):
     user_input = update.message.text
     pgn = pgn_helper.read_pgn_from_string(user_input)
     if pgn is not None:
-        msg = context.bot.send_message(chat_id=update.effective_chat.id, text="Analyzing your game now! Progress: 0%")
         analysis = Analysis(pgn)
         analysis.run()
+        current_progress = analysis.progress
+        msg = context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=f"Analyzing your game now! Progress: {current_progress}% (depth: {analysis.depth})")
         while analysis.is_done is not True:
-            context.bot.edit_message_text(chat_id=update.effective_chat.id,
-                                          message_id=msg.message_id,
-                                          text=f'Analysis progress: {analysis.progress}%')
+            if current_progress != analysis.progress:
+                current_progress = analysis.progress
+                context.bot.edit_message_text(chat_id=update.effective_chat.id,
+                                              message_id=msg.message_id,
+                                              text=f'Analyzing your game now! Progress: {current_progress}% (depth: {analysis.depth})')
             time.sleep(1)
         context.bot.edit_message_text(chat_id=update.effective_chat.id,
                                       message_id=msg.message_id,
-                                      text=f'Analysis progress: 100%')
+                                      text=f'Analyzing your game now! Progress: 100% (depth: {analysis.depth})')
         blunders = analysis.blunders
         context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_blunders(blunders))
     else:
