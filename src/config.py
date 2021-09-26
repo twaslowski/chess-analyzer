@@ -4,7 +4,7 @@ from typing import NamedTuple, Dict
 
 class Arguments(NamedTuple):
     stockfish_binary_path: str
-    depth: int
+    time: int
     log_level: str
 
 

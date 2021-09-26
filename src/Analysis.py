@@ -13,7 +13,7 @@ class Analysis:
         self.progress: int = 0
         self.is_done = False
         self.conf = config.create_args_object('config.json')
-        self.depth = int(self.conf.depth)
+        self.time = int(self.conf.time)
         self.blunders = []
 
     def run(self):
@@ -37,7 +37,7 @@ class Analysis:
             board.push(move)
 
             # do analysis for current board state
-            analysis = engine.analyse(board, chess.engine.Limit(depth=self.depth))
+            analysis = engine.analyse(board, chess.engine.Limit(time=self.time))
 
             # do the score graph
             score_relative = analysis.get('score')
