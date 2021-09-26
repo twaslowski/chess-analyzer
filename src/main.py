@@ -7,9 +7,11 @@ import os
 import analyzer
 from Blunder import Blunder
 from typing import List
+from Analysis import Analysis
+import time
 
 # Setup
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.WARN)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 updater = Updater(token=os.getenv('telegram_token_chess'), use_context=True)
 dispatcher = updater.dispatcher
 
@@ -36,15 +38,31 @@ def message_handler(update, context):
     user_input = update.message.text
     pgn = analyzer.read_pgn_from_string(user_input)
     if pgn is not None:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="I'm analyzing your game now! This may take a second.")
-        blunders = analyzer.analyze_game(pgn)
+        msg = context.bot.send_message(chat_id=update.effective_chat.id, text="Analyzing your game now! Progress: 0%")
+        analysis = Analysis(pgn)
+        analysis.run()
+        while analysis.is_done is not True:
+            context.bot.edit_message_text(chat_id=update.effective_chat.id,
+                                          message_id=msg.message_id,
+                                          text=f'Analysis progress: {analysis.progress}%')
+            time.sleep(1)
+        context.bot.edit_message_text(chat_id=update.effective_chat.id,
+                                      message_id=msg.message_id,
+                                      text=f'Analysis progress: 100%')
+        blunders = analysis.blunders
         context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_blunders(blunders))
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text="That doesn't look like a PGN to me.")
 
 
+def error_handler(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="An error occurred while analyzing your game. Ping @violin_tobi for details.")
+
+
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('help', help_handler))
+dispatcher.add_error_handler(error_handler)
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message_handler))
 
 updater.start_polling()

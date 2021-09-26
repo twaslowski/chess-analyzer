@@ -5,6 +5,7 @@ from typing import NamedTuple, Dict
 class Arguments(NamedTuple):
     stockfish_binary_path: str
     analysis: Dict[str, float]
+    log_level: str
 
 
 def create_args_object(config_path):
