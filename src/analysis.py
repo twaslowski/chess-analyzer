@@ -2,7 +2,7 @@ import chess
 import chess.pgn
 import chess.engine
 import math
-from Blunder import Blunder
+from blunder import Blunder
 import config
 import threading
 
