@@ -28,11 +28,14 @@ class Blunder:
         # create string for alternative line
         turn_counter = self.turn
         alternative_line_algebraic_string = ''
-        for move in self.continuation:
-            move_algebraic = self.board.san(move)
-            turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, False)
+        for i in range(len(self.continuation)):
+            move_algebraic = self.board.san(self.continuation[i])
+            if i is 0:
+                turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, True)
+            else:
+                turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, False)
             alternative_line_algebraic_string += f"{turn_string} "
-            self.board.push(move)
+            self.board.push(self.continuation[i])
             turn_counter += 0.5
 
         # clean up
