@@ -7,7 +7,7 @@ import os
 import pgn_helper
 from blunder import Blunder
 from typing import List
-from Analysis import Analysis
+from analysis import Analysis
 import time
 
 # Setup
