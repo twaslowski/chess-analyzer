@@ -5,7 +5,7 @@ import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
 import pgn_helper
-from Blunder import Blunder
+from blunder import Blunder
 from typing import List
 from Analysis import Analysis
 import time
