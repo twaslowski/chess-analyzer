@@ -5,7 +5,7 @@ import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
 import pgn_helper
-from blunder import Blunder
+from move_evaluation import MoveEvaluation
 from typing import List
 from analysis import Analysis
 import time
@@ -27,7 +27,7 @@ def help_handler(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='blub')
 
 
-def stringify_blunders(blunders: List[Blunder]):
+def stringify_blunders(blunders: List[MoveEvaluation]):
     result_string = "Here's the most interesting moves I could find: \n\n"
     for blunder in blunders:
         result_string += blunder.stringify() + '\n'

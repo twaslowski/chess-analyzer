@@ -5,7 +5,7 @@ import board_util
 
 
 @dataclass()
-class Blunder:
+class MoveEvaluation:
     board: chess.Board
     scores: Tuple[float, float]  # prev_score is 0, new_score is 1
     turn: int

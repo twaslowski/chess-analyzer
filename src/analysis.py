@@ -2,7 +2,7 @@ import chess
 import chess.pgn
 import chess.engine
 import math
-from blunder import Blunder
+from move_evaluation import MoveEvaluation
 import config
 import threading
 
@@ -14,7 +14,7 @@ class Analysis:
         self.is_done = False
         self.conf = config.create_args_object('config.json')
         self.time = int(self.conf.time)
-        self.blunders = []
+        self.move_evals = []
 
     def run(self):
         t1 = threading.Thread(target=self.analyze_game)
@@ -59,8 +59,8 @@ class Analysis:
     def _evaluate_move(self, board, move, move_counter, prev_score, score, prev_analysis):
         if move_counter > 1:
             if _is_blunder(prev_score, score):
-                self.blunders.append(
-                    Blunder(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6], prev_analysis.get('depth')))
+                self.move_evals.append(
+                    MoveEvaluation(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6], prev_analysis.get('depth')))
 
 
 def _calculate_absolute_score(relative_score):
