@@ -30,7 +30,7 @@ class Blunder:
         alternative_line_algebraic_string = ''
         for move in self.continuation:
             move_algebraic = self.board.san(move)
-            turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, True)
+            turn_string = board_util.generate_turn_string(turn_counter, move_algebraic, False)
             alternative_line_algebraic_string += f"{turn_string} "
             self.board.push(move)
             turn_counter += 0.5
