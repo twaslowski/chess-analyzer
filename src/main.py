@@ -4,6 +4,7 @@ from telegram.ext import Updater
 import logging
 from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
+import emoji
 import pgn_helper
 from move_evaluation import MoveEvaluation
 from typing import List
@@ -29,8 +30,17 @@ def help_handler(update, context):
 
 def stringify_evals(move_evals: List[MoveEvaluation]):
     result_string = "Here's the most interesting moves I could find: \n\n"
-    for move_eval in move_evals:
+    black_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 != 0]
+    white_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 == 0]
+
+    result_string += emoji.emojize("Moves for Black: :white_circle:\n\n")
+    for move_eval in white_evals:
         result_string += move_eval.stringify() + '\n'
+
+    result_string += emoji.emojize("Moves for Black: :black_circle:\n\n")
+    for move_eval in black_evals:
+        result_string += move_eval.stringify() + '\n'
+
     return result_string
 
 
