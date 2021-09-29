@@ -9,12 +9,12 @@ import threading
 
 class Analysis:
     def __init__(self, pgn):
-        self.pgn = pgn
-        self.progress: int = 0
-        self.is_done = False
         self.conf = config.create_args_object('config.json')
-        self.time = int(self.conf.time)
-        self.move_evals = []
+        self.time = int(self.conf.time)  # time the engine gets to take to evaluate a single move
+        self.progress: int = 0  # analysis progress, 0 to 100
+        self.is_done = False
+        self.pgn = pgn
+        self.move_evals = []  # evaluation of all moves
 
     def run(self):
         t1 = threading.Thread(target=self.analyze_game)
@@ -44,7 +44,6 @@ class Analysis:
             score_absolute = _calculate_absolute_score(score_relative)
             scores.append(score_absolute)
 
-            # blunders, mistakes, inaccuracies logic
             self._evaluate_move(board, move, move_counter, prev_score, score_absolute, prev_analysis)
             prev_score = score_absolute
 
@@ -58,9 +57,10 @@ class Analysis:
 
     def _evaluate_move(self, board, move, move_counter, prev_score, score, prev_analysis):
         if move_counter > 1:
-            if _is_blunder(prev_score, score):
+            if _is_significant(prev_score, score):
                 self.move_evals.append(
-                    MoveEvaluation(board.copy(), (prev_score, score), move_counter, move, prev_analysis.get('pv')[:6], prev_analysis.get('depth')))
+                    MoveEvaluation(board.copy(), (prev_score, score), move_counter, move,
+                                   prev_analysis.get('pv')[:6], prev_analysis.get('depth')))
 
 
 def _calculate_absolute_score(relative_score):
@@ -70,8 +70,7 @@ def _calculate_absolute_score(relative_score):
         return int(str(relative_score.white())) / 100
 
 
-# strictly numerical approach to blunders
-def _is_blunder(prev_score, score):
+def _is_significant(prev_score, score):
     if _have_same_sign(prev_score, score):
         prev_score = math.fabs(prev_score)
         score = math.fabs(score)
