@@ -33,11 +33,11 @@ def stringify_evals(move_evals: List[MoveEvaluation]):
     black_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 != 0]
     white_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 == 0]
 
-    result_string += emoji.emojize("Moves for Black: :white_circle:\n\n")
+    result_string += emoji.emojize("Important moves by White: :white_circle:\n\n")
     for move_eval in white_evals:
         result_string += move_eval.stringify() + '\n'
 
-    result_string += emoji.emojize("Moves for Black: :black_circle:\n\n")
+    result_string += emoji.emojize("Important moves by Black: :black_circle:\n\n")
     for move_eval in black_evals:
         result_string += move_eval.stringify() + '\n'
 
