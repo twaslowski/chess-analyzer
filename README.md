@@ -31,6 +31,17 @@ be done with it – whatever works best for you.
 
 Of course I'd be very happy if you decided to contribute to this repository! Just open a pull request :)
 
+## Backlog
+
+There are some ideas I'm trying to implement right now. Here's a list, in no particular order. If you're interested
+in implementing one of those features, hit me up:
+
+- Calculation of an accuracy score
+- Distinction into Blunders, Mistakes and Inaccuracies
+- Missed wins and faster mating lines
+- A nice-looking infographic accumulating the scores throughout the game
+- User settings regarding analysis depth/time, not having to see opponent mistakes and other good stuff
+
 ## Reporting Issues
 
 If there's anything wrong with the code, feel free to open an issue. Please describe your issue with as
