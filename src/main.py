@@ -12,7 +12,7 @@ from analysis import Analysis
 import time
 
 # Setup
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 updater = Updater(token=os.getenv('telegram_token_chess'), use_context=True)
 dispatcher = updater.dispatcher
 
@@ -66,12 +66,15 @@ def message_handler(update, context):
         evals = analysis.move_evals
         context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_evals(evals))
     else:
+        logging.info(f"Received a message that was not a valid PGN from {update.effective_chat.id}")
         context.bot.send_message(chat_id=update.effective_chat.id, text="That doesn't look like a PGN to me.")
 
 
 def error_handler(update, context):
+    logging.warning("An error occurred and was handled.")
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="An error occurred while analyzing your game. Ping @violin_tobi for details.")
+                             text="An error occurred while analyzing your game."
+                                  "Ping @violin_tobi for details or open a Github issue detailing the problem.")
 
 
 dispatcher.add_handler(CommandHandler('start', start_handler))
