@@ -50,6 +50,7 @@ def message_handler(update, context):
     user_input = update.message.text
     pgn = pgn_helper.read_pgn_from_string(user_input)
     if pgn is not None:
+        logging.info(f"Analyzing game for chat id {update.effective_chat.id}")
         analysis = Analysis(pgn)
         analysis.run()
         current_progress = analysis.progress
@@ -81,7 +82,7 @@ def error_handler(update, context):
 
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('help', help_handler))
-dispatcher.add_error_handler(error_handler)
+# dispatcher.add_error_handler(error_handler)
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message_handler))
 
 updater.start_polling()
