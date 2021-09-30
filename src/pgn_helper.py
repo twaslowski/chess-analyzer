@@ -1,6 +1,7 @@
-import chess.pgn
-import chess.engine
 import io
+
+import chess.engine
+import chess.pgn
 
 
 def read_pgn_from_string(text: str):

@@ -1,5 +1,6 @@
+from typing import NamedTuple
+
 from json_configparser import ConfigArgs
-from typing import NamedTuple, Dict
 
 
 class Arguments(NamedTuple):

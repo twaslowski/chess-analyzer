@@ -1,13 +1,16 @@
-import chess
-from typing import Tuple, List
 from dataclasses import dataclass
+from typing import Tuple, List
+
+import chess
+from chess.engine import PovScore
+
 import board_util
 
 
 @dataclass()
 class MoveEvaluation:
     board: chess.Board
-    scores: Tuple[float, float]  # prev_score is 0, new_score is 1
+    scores: Tuple[PovScore, PovScore]  # prev_score is 0, new_score is 1
     turn: int
     move: chess.Move
     continuation: List[chess.Move]

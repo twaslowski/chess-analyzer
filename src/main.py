@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-from telegram.ext import Updater
 import logging
-from telegram.ext import CommandHandler, MessageHandler, Filters
 import os
-import emoji
-import pgn_helper
-from move_evaluation import MoveEvaluation
-from typing import List
-from analysis import Analysis
 import time
+from typing import List
+
+import emoji
+from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater
+
+import pgn_helper
+from analysis import Analysis
+from move_evaluation import MoveEvaluation
 
 # Setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

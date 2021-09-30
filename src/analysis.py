@@ -1,10 +1,12 @@
-import chess
-import chess.pgn
-import chess.engine
 import math
-from move_evaluation import MoveEvaluation
-import config
 import threading
+
+import chess
+import chess.engine
+import chess.pgn
+
+import config
+from move_evaluation import MoveEvaluation
 
 
 class Analysis:
