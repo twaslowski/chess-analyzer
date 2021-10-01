@@ -8,6 +8,8 @@ from chess.engine import InfoDict, PovScore, Score
 
 import board_util
 
+analysis_base = 'https://lichess.org/analysis/'
+
 
 @dataclass()
 class MoveEvaluation:
@@ -26,13 +28,14 @@ class MoveEvaluation:
     def stringify(self) -> str:
         # setup
         prev_move = self.board.pop()
+        analysis_link = analysis_base + self.board.fen().replace(' ', '%20')
         move_algebraic = self.board.san(self.move)
 
         result_string = ''
-        result_string += f"{board_util.generate_turn_string(self.turn, move_algebraic, True)}"
-        result_string += f"({_format_score(self.prev_score)} to {_format_score(self.current_score)})\n"
+        result_string += f"[{board_util.generate_turn_string(self.turn, move_algebraic, True)}]({analysis_link})"
+        result_string += f"\({_format_score(self.prev_score)} to {_format_score(self.current_score)}\)\n"
         result_string += f"Alternative and Continuation: {self._generate_alternative_line_algebraic(prev_move)}" \
-                         f"(depth: {self.prev_analysis.get('depth')})\n"
+                         f"\(depth: {self.prev_analysis.get('depth')}\)\n"
         return result_string
 
     def _generate_alternative_line_algebraic(self, prev_move) -> str:

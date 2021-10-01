@@ -6,8 +6,8 @@ import time
 from typing import List
 
 import emoji
-from telegram.ext import CommandHandler, MessageHandler, Filters
-from telegram.ext import Updater
+from telegram.ext import CommandHandler, MessageHandler, Filters, Updater
+from telegram import ParseMode
 
 import pgn_helper
 from analysis import Analysis
@@ -17,6 +17,9 @@ from move_evaluation import MoveEvaluation
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 updater = Updater(token=os.getenv('telegram_token_chess'), use_context=True)
 dispatcher = updater.dispatcher
+
+# telegram markdown stuff
+special_characters = '{}|_-=!~.>+#`'
 
 
 def start_handler(update, context):
@@ -30,20 +33,28 @@ def help_handler(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='blub')
 
 
+def escape_special_chars(result_string):
+    for i in range(len(special_characters)):
+        char = special_characters[i]
+        result_string = result_string.replace(char, f"\\{char}")
+
+    return result_string
+
+
 def stringify_evals(move_evals: List[MoveEvaluation]):
-    result_string = "Here's the most interesting moves I could find: \n\n"
+    result_string = emoji.emojize("Here's the most interesting moves I could find :thought_balloon: \n\n")
     black_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 != 0]
     white_evals = [move_eval for move_eval in move_evals if move_eval.turn % 1 == 0]
 
     result_string += emoji.emojize("Important moves by White: :white_circle:\n\n")
     for move_eval in white_evals:
-
         result_string += move_eval.stringify() + '\n'
 
     result_string += emoji.emojize("Important moves by Black: :black_circle:\n\n")
     for move_eval in black_evals:
         result_string += move_eval.stringify() + '\n'
 
+    result_string = escape_special_chars(result_string)
     return result_string
 
 
@@ -69,7 +80,10 @@ def message_handler(update, context):
                                       text=f'Analyzing your game now! Progress: 100%')
         analysis.categorize_evals()
         blunders = analysis.blunders
-        context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_evals(blunders))
+        response = stringify_evals(blunders)
+        logging.info(response)
+        update.message.reply_text(text=response,
+                                  parse_mode=ParseMode.MARKDOWN_V2)
     else:
         logging.info(f"Received a message that was not a valid PGN from {update.effective_chat.id}")
         context.bot.send_message(chat_id=update.effective_chat.id, text="That doesn't look like a PGN to me.")
@@ -82,9 +96,19 @@ def error_handler(update, context):
                                   "Ping @violin_tobi for details or open a Github issue detailing the problem.")
 
 
+def echo_markup(update, context):
+    user_input = update.message.text
+    text = '[bla](https://google.com)'
+    update.message.reply_text(
+        text=text,
+        parse_mode=ParseMode.MARKDOWN_V2)
+
+
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('help', help_handler))
 # dispatcher.add_error_handler(error_handler)
 dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message_handler))
+# dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), echo_markup))
+
 
 updater.start_polling()
