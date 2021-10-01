@@ -22,6 +22,18 @@ class MoveEvaluationTest(unittest.TestCase):
         self.assertEqual(
             move_evaluation._make_score_absolute(PovScore(Mate(5), WHITE)), Mate(5))
 
+    def test_format_score(self):
+        self.assertEqual(move_evaluation._format_score(Cp(583)), "5.83")
+
+    def test_format_score_negative(self):
+        self.assertEqual(move_evaluation._format_score(Cp(-583)), "-5.83")
+
+    def test_format_score_mate_negative(self):
+        self.assertEqual(move_evaluation._format_score(Mate(-4)), "#4")
+
+    def test_format_score_mate(self):
+        self.assertEqual(move_evaluation._format_score(Mate(4)), "#4")
+
 
 if __name__ == '__main__':
     unittest.main()

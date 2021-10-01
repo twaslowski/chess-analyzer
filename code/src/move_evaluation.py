@@ -100,7 +100,8 @@ def _format_score(score: Score) -> str:
     if not score.is_mate():
         return str(int(str(score)) / 100)
     else:
-        return str(score)
+        score = str(score)
+        return score[0:1] + score[2:]
 
 
 # returns if two numbers are both negative or positive
