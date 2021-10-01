@@ -7,6 +7,7 @@ class Arguments(NamedTuple):
     stockfish_binary_path: str
     time: float
     log_level: str
+    recognize_slower_mate: bool
 
 
 def create_args_object(config_path):

@@ -37,6 +37,7 @@ def stringify_evals(move_evals: List[MoveEvaluation]):
 
     result_string += emoji.emojize("Important moves by White: :white_circle:\n\n")
     for move_eval in white_evals:
+
         result_string += move_eval.stringify() + '\n'
 
     result_string += emoji.emojize("Important moves by Black: :black_circle:\n\n")
@@ -66,8 +67,9 @@ def message_handler(update, context):
         context.bot.edit_message_text(chat_id=update.effective_chat.id,
                                       message_id=msg.message_id,
                                       text=f'Analyzing your game now! Progress: 100%')
-        evals = analysis.move_evals
-        context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_evals(evals))
+        analysis.categorize_evals()
+        blunders = analysis.blunders
+        context.bot.send_message(chat_id=update.effective_chat.id, text=stringify_evals(blunders))
     else:
         logging.info(f"Received a message that was not a valid PGN from {update.effective_chat.id}")
         context.bot.send_message(chat_id=update.effective_chat.id, text="That doesn't look like a PGN to me.")

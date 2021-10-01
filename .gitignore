@@ -3,5 +3,5 @@ venv
 stockfish
 example_pgn*.txt
 __pychache__
-src/__pycache__
+code/src/__pycache__
 pid.txt

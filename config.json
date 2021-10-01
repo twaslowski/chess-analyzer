@@ -1,5 +1,6 @@
 {
   "stockfish_binary_path": "stockfish/bin/stockfish",
   "time": 1.0,
-  "log_level": "INFO"
+  "log_level": "INFO",
+  "recognize_slower_mate": false
 }
