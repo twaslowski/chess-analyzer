@@ -12,7 +12,7 @@ import board_util
 @dataclass()
 class MoveEvaluation:
     board: chess.Board
-    turn: int
+    turn: float
     move: chess.Move
     analyses: Tuple[InfoDict, InfoDict]  # prev_analysis is 0, current_analysis is 1
 

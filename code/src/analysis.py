@@ -9,8 +9,8 @@ from move_evaluation import MoveEvaluation
 
 
 class Analysis:
-    def __init__(self, pgn):
-        self.conf = config.create_args_object('config.json')
+    def __init__(self, pgn, config_path):
+        self.conf = config.create_args_object(config_path)
         self.time = int(self.conf.time)  # time the engine gets to take to evaluate a single move
         self.progress: int = 0  # analysis progress, 0 to 100
         self.is_done: bool = False

@@ -52,7 +52,7 @@ def message_handler(update, context):
     pgn = pgn_helper.read_pgn_from_string(user_input)
     if pgn is not None:
         logging.info(f"Analyzing game for chat id {update.effective_chat.id}")
-        analysis = Analysis(pgn)
+        analysis = Analysis(pgn, "config.json")
         analysis.run()
         current_progress = analysis.progress
         msg = context.bot.send_message(chat_id=update.effective_chat.id,
