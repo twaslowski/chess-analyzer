@@ -1,8 +1,8 @@
 # Chess Analyzer
 
-This is a Telegram bot that analyzes your chess games for you. Simply send it a PGN with your game
-(via the "Share" feature in lichess or "Download" in chess.com) and you will get an analysis. 
-Right now, the logic for the analysis is very primitive, but I'm working on improving it.
+This is a self-learning project where I implemented my own chess game analysis using Stockfish. It runs as a Telegram bot – you can simply send it a PGN and it will perform an analysis based on the deviation of a player's actual move vs the ideal Stockfish move. The implementation is very naive and only manages to run at low depths in favour of speed. 
+
+This project is not maintained anymore; the main point was to get analyses of chess.com games, but chess.com makes exporting PGNs on mobile unnecessarily hard, so I just use lichess, which offers unlimited analyses. It was primarily intended for learning anyhow.
 
 ## Usage
 
@@ -27,22 +27,12 @@ After having done all that, just run the script with ```./run.sh```. This calls 
 use because it's very convenient on a Raspberry. You could also call ```python3 src/main.py &``` and
 be done with it – whatever works best for you. 
 
-## Contributing
+## Ideas
 
-Of course I'd be very happy if you decided to contribute to this repository! Just open a pull request :)
-
-## Backlog
-
-There are some ideas I'm trying to implement right now. Here's a list, in no particular order. If you're interested
-in implementing one of those features, hit me up:
+There are potential improvements that could be made to this bot. However, since lichess has its own unlimited analysis mode these days, it's pretty much obsolete. Still, if somebody would like to continue on this, here's some ideas.
 
 - Calculation of an accuracy score
-- Distinction into Blunders, Mistakes and Inaccuracies
+- Distinction into Blunders, Mistakes and Inaccuracies (based on eval difference?)
 - Missed wins and faster mating lines
 - A nice-looking infographic accumulating the scores throughout the game
-- User settings regarding analysis depth/time, not having to see opponent mistakes and other good stuff
-
-## Reporting Issues
-
-If there's anything wrong with the code, feel free to open an issue. Please describe your issue with as
-much detail as you can so I can get on fixing it as easily as possible.
+- User settings regarding analysis depth/time, not having to see opponent mistakes
